@@ -1,0 +1,201 @@
+{
+  "best_model": "HGB + CAMS",
+  "horizon_h": 24,
+  "features": [
+    "pm_lag0",
+    "pm_lag1",
+    "pm_lag2",
+    "pm_lag3",
+    "pm_lag6",
+    "pm_lag12",
+    "pm_lag24",
+    "pm_mean24",
+    "pm_std24",
+    "temperature_2m",
+    "relative_humidity_2m",
+    "wind_speed_10m",
+    "precipitation",
+    "surface_pressure",
+    "cloud_cover",
+    "wind_dir_sin",
+    "wind_dir_cos",
+    "temperature_2m_f24",
+    "relative_humidity_2m_f24",
+    "wind_speed_10m_f24",
+    "precipitation_f24",
+    "surface_pressure_f24",
+    "cloud_cover_f24",
+    "wind_dir_sin_f24",
+    "wind_dir_cos_f24",
+    "lat",
+    "lon_sin",
+    "lon_cos",
+    "elevation",
+    "hour_sin",
+    "hour_cos",
+    "month_sin",
+    "month_cos",
+    "cams_now",
+    "cams_f24"
+  ],
+  "results": {
+    "Persistence": {
+      "val": {
+        "rmse": 21.977631713101914,
+        "mae": 8.887905364076092,
+        "r2": 0.38515338880044125,
+        "n": 46103
+      },
+      "test_seen": {
+        "rmse": 18.34378739069878,
+        "mae": 7.716139063076356,
+        "r2": 0.2924308256841792,
+        "n": 46087
+      },
+      "test_unseen": {
+        "rmse": 11.080402905233287,
+        "mae": 5.936795599325092,
+        "r2": 0.7584075147219784,
+        "n": 58082
+      }
+    },
+    "CAMS raw (no ML)": {
+      "val": {
+        "rmse": 25.940957552345647,
+        "mae": 13.03552894605557,
+        "r2": 0.143402097069653,
+        "n": 46103
+      },
+      "test_seen": {
+        "rmse": 25.732430790304424,
+        "mae": 13.226721374791158,
+        "r2": -0.3923631306097721,
+        "n": 46087
+      },
+      "test_unseen": {
+        "rmse": 16.21741490085079,
+        "mae": 9.594460331944491,
+        "r2": 0.4824699499648123,
+        "n": 58082
+      }
+    },
+    "Ridge": {
+      "val": {
+        "rmse": 18.501155120277264,
+        "mae": 7.618583904579377,
+        "r2": 0.5642848210797922,
+        "n": 46103
+      },
+      "test_seen": {
+        "rmse": 16.006565300460636,
+        "mae": 6.645429157865266,
+        "r2": 0.4612501162652859,
+        "n": 46087
+      },
+      "test_unseen": {
+        "rmse": 11.477187656356577,
+        "mae": 6.114069560760581,
+        "r2": 0.7407950555456357,
+        "n": 58082
+      }
+    },
+    "HistGradientBoosting": {
+      "val": {
+        "rmse": 16.723016855496873,
+        "mae": 6.753069405974543,
+        "r2": 0.6440129039907864,
+        "n": 46103
+      },
+      "test_seen": {
+        "rmse": 15.068694437943277,
+        "mae": 6.069290159173013,
+        "r2": 0.5225343413354303,
+        "n": 46087
+      },
+      "test_unseen": {
+        "rmse": 11.129483164367237,
+        "mae": 6.704157154283768,
+        "r2": 0.7562625236232785,
+        "n": 58082
+      }
+    },
+    "HGB + CAMS": {
+      "val": {
+        "rmse": 16.647774830155356,
+        "mae": 6.474886442092166,
+        "r2": 0.6472090895717239,
+        "n": 46103
+      },
+      "test_seen": {
+        "rmse": 14.837559752020468,
+        "mae": 5.773603613259155,
+        "r2": 0.5370694416159099,
+        "n": 46087
+      },
+      "test_unseen": {
+        "rmse": 10.082531673682098,
+        "mae": 5.509213896291089,
+        "r2": 0.7999624593615643,
+        "n": 58082
+      }
+    },
+    "HGB + CAMS + persistence blend": {
+      "val": {
+        "rmse": 16.647774830155356,
+        "mae": 6.474886442092166,
+        "r2": 0.6472090895717239,
+        "n": 46103
+      },
+      "test_seen": {
+        "rmse": 14.837559752020468,
+        "mae": 5.773603613259155,
+        "r2": 0.5370694416159099,
+        "n": 46087
+      },
+      "test_unseen": {
+        "rmse": 10.082531673682098,
+        "mae": 5.509213896291089,
+        "r2": 0.7999624593615643,
+        "n": 58082
+      }
+    }
+  },
+  "events": {
+    "Persistence": {
+      "cat_accuracy": 0.7352475304553178,
+      "event_precision": 0.6988842299765475,
+      "event_recall": 0.7037355088020609,
+      "event_rate": 0.1341473950983498
+    },
+    "HGB + CAMS": {
+      "cat_accuracy": 0.7846960228090891,
+      "event_precision": 0.7876427829698858,
+      "event_recall": 0.6513525118076428,
+      "event_rate": 0.1341473950983498
+    },
+    "CAMS raw (no ML)": {
+      "cat_accuracy": 0.6152310188251783,
+      "event_precision": 0.47375126068262646,
+      "event_recall": 0.6386861313868614,
+      "event_rate": 0.1341473950983498
+    }
+  },
+  "interval_80_coverage": 0.8072171183365493,
+  "has_cams": true,
+  "unseen_cities": [
+    "Bangkok",
+    "Berlin",
+    "Mexico City",
+    "Brisbane",
+    "Kathmandu"
+  ],
+  "n_cities": 33,
+  "n_rows": 365425,
+  "period": [
+    "2024-10-02 00:00:00+00:00",
+    "2026-09-29 22:00:00+00:00"
+  ],
+  "trained_at": "2026-10-31T14:13:13+00:00",
+  "target": "log1p(PM2.5) 24 h ahead; reported in ug/m3",
+  "sources": "OpenAQ ground stations (PM2.5); Open-Meteo ERA5 weather + CAMS model PM2.5"
+}
