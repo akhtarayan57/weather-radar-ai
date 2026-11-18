@@ -5,7 +5,7 @@ from .common import ApiError, get_json
 
 FC = "https://api.open-meteo.com/v1/forecast"
 AQ = "https://air-quality-api.open-meteo.com/v1/air-quality"
-CUR_W = ["temperature_2m", "relative_humidity_2m", "wind_speed_10m", "precipitation", "cloud_cover", "surface_pressure"]
+CUR_W = ["temperature_2m", "relative_humidity_2m", "wind_speed_10m", "precipitation", "cloud_cover", "surface_pressure", "weather_code", "is_day"]
 CUR_A = ["pm2_5", "us_aqi", "uv_index"]
 HOURLY_W = ["temperature_2m", "apparent_temperature", "relative_humidity_2m", "precipitation_probability",
             "precipitation", "wind_speed_10m", "wind_gusts_10m", "surface_pressure", "cloud_cover", "uv_index"]
@@ -99,3 +99,30 @@ def hourly_many(pts, col, chunk=40):
             h = r["hourly"]
             cols[n] = pd.Series(h[col], index=pd.to_datetime(h["time"], utc=True), dtype=float)
     return pd.DataFrame(cols)
+
+
+CUR_APP = ["temperature_2m", "apparent_temperature", "is_day", "weather_code", "relative_humidity_2m", "wind_speed_10m",
+           "wind_direction_10m", "wind_gusts_10m", "pressure_msl", "precipitation"]
+HOURLY_APP = ["temperature_2m", "weather_code", "precipitation_probability", "precipitation", "is_day", "uv_index"]
+DAILY_APP = ["weather_code", "temperature_2m_max", "temperature_2m_min", "precipitation_probability_max", "precipitation_sum",
+             "sunrise", "sunset", "uv_index_max", "wind_speed_10m_max"]
+
+
+def app_forecast(lat, lon):
+    """Current + 14-day forecast in the place's LOCAL time (naive timestamps)."""
+    j = get_json(FC, {"latitude": lat, "longitude": lon, "timezone": "auto", "forecast_days": 14, "current": ",".join(CUR_APP),
+                      "hourly": ",".join(HOURLY_APP), "daily": ",".join(DAILY_APP)})
+    h = pd.DataFrame({c: j["hourly"][c] for c in HOURLY_APP}, index=pd.to_datetime(j["hourly"]["time"]))
+    d = pd.DataFrame({c: j["daily"][c] for c in DAILY_APP}, index=pd.to_datetime(j["daily"]["time"]))
+    return {"current": j["current"], "hourly": h, "daily": d, "tz": j.get("timezone_abbreviation", "")}
+
+
+def app_air(lat, lon):
+    """Current + hourly US AQI / PM2.5 (CAMS model) in local time, or None if unavailable."""
+    try:
+        j = get_json(AQ, {"latitude": lat, "longitude": lon, "timezone": "auto", "forecast_days": 3, "current": "us_aqi,pm2_5",
+                          "hourly": "us_aqi,pm2_5"})
+        h = pd.DataFrame({c: j["hourly"][c] for c in ("us_aqi", "pm2_5")}, index=pd.to_datetime(j["hourly"]["time"]))
+        return {"current": j["current"], "hourly": h}
+    except (ApiError, KeyError):
+        return None

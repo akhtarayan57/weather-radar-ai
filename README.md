@@ -46,3 +46,21 @@ Use the same Python version on Streamlit Cloud as you trained with; scikit-learn
 
 ## Honest notes on the CAMS feature
 CAMS PM2.5 from Open-Meteo's archive is a near-analysis value, better than a true 24 h-ahead forecast, so test scores are optimistic. Live scoreboard errors are the honest number to quote.
+
+## Animated map
+World Map > "Animated wind & colour map": colour-filled field (temperature, wind, humidity, cloud, rain, pressure, PM2.5, US AQI) with moving wind lines, a 48 h time slider (press play) and click-for-values. Data: Open-Meteo forecast grid (free, ~300-450 points per region, cached 1 h); drawn in the browser with Leaflet + CARTO basemap tiles. Fields are interpolated between grid points, so they are smooth overviews, not street-level detail. PM2.5/AQI layers are CAMS model estimates.
+
+## Phone-app style screens (v2)
+Tabs: Today (hero, next 24 h with AQI badges, details, day parts), 14 days, Maps (rain radar, air quality, wind & weather), My places, More (AI prediction, live scoreboard, compare, methods). Light theme is set in `.streamlit/config.toml`. Saved places and the selected place are stored in the page address (bookmark it).
+Map tiles: Esri Light Gray (keyless) with OpenStreetMap fallback. CARTO tiles were removed because CARTO now requires an API key (they watermark "API KEY REQUIRED"). Radar: RainViewer free public API (past 2 h only, zoom 7 max, 100 requests/min per IP).
+
+## World map data (detailed, free)
+The Air quality and Wind & weather maps show the whole world from `data/live/world_field.json.gz` (6-degree grid, 72 h, ~600 KB), built by `scripts/build_world_field.py` (about 10 minutes, no key) and refreshed twice a day by `.github/workflows/world_field.yml`. Until that file exists the app falls back to a coarse 12-degree grid. Build it once now: `python scripts/build_world_field.py`, commit the file and push, or run the "world-field" workflow from the GitHub Actions tab.
+Country borders and place names are drawn above the colours; the Opacity slider controls how strongly the colours cover the map.
+
+## Air quality accuracy (important)
+The free CAMS model (map layers, fallback values) is coarse and can badly underestimate very polluted cities such as Delhi (model about 58 ug/m3 vs about 190-250 measured). The Today and My places screens therefore use the latest real PM2.5 from the nearest OpenAQ station within 25 km (mean of the last 3 hourly readings) when a key is set, and say so ("measured at ..."). AQI is calculated from PM2.5 only, on the US EPA scale (default, same as AQI.in) or India's CPCB scale (toggle). Official AQI uses 24 h averages and other pollutants, so numbers can differ a little from official dashboards.
+
+## Satellite tab and map fixes (v3)
+Maps > Satellite uses NASA GIBS (free, no key): VIIRS true-colour photo, MODIS aerosol optical depth (haze/smoke/dust) and VIIRS active fires, for any UTC date (default yesterday). Layer ids: VIIRS_SNPP_CorrectedReflectance_TrueColor, MODIS_Combined_Value_Added_AOD, VIIRS_SNPP_Thermal_Anomalies_375m_All. Aerosol optical depth is a column measurement, not ground-level PM2.5.
+Field maps (air quality, wind & weather): no repeated world copies, the view fills the width, subtle labels, and country borders from Natural Earth GeoJSON are drawn above the colours.

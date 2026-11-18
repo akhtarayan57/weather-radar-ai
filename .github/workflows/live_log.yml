@@ -5,6 +5,8 @@ on:
   workflow_dispatch:
 permissions:
   contents: write
+concurrency:
+  group: repo-writes
 jobs:
   log:
     runs-on: ubuntu-latest
@@ -22,4 +24,4 @@ jobs:
           git config user.name "live-log-bot"
           git config user.email "bot@users.noreply.github.com"
           git add data/live
-          git diff --staged --quiet || (git commit -m "live predictions" && git push)
+          git diff --staged --quiet || (git commit -m "live predictions" && git pull --rebase && git push)
